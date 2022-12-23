@@ -31,10 +31,11 @@ def main():
                 color_string = 'gray'
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
                 img = np.stack((img,) * 3, axis=-1)
-            img = cv.resize(img, (480, 360))
+            img = cv.resize(img, (320, 240))
+            # img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
             mspp_img = ms.meanshiftpp(img, h)
-            size_string = '480x360'
-            filename = 'resultnt/seg_' + color_string + size_string + image_name
+            size_string = '320x240'
+            filename = 'resultnt/TRYSLICINGHSV' + color_string + size_string + image_name
             status = cv.imwrite(filename, mspp_img[0])
             print('Image written: %s - Status: %s' % (image_name, status))
             with open('resultnt/record.txt', 'a') as f:
