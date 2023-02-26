@@ -11,7 +11,6 @@ def checkValueExistence(storage, indexes, h):
     return storage[indexes[0]][indexes[1]][indexes[2]]
     
 
-
 def meanshiftpp(src, h):
     print("Start: %s" % (time.asctime(time.localtime(time.time()))))
     start_time = time.time()
@@ -26,7 +25,7 @@ def meanshiftpp(src, h):
     max_iterations = 5
     while True:
         counter = np.zeros((256, 256, 256))
-        values = np.empty((256, 256, 256), object)
+        values = np.zeros((256, 256, 256, 3))
         storage = np.empty((256, 256, 256), object)
         for i in range(rows):
             for j in range(cols):
@@ -34,8 +33,8 @@ def meanshiftpp(src, h):
                 x = int(math.floor(prev_img[i][j][1] / h))
                 z = int(math.floor(prev_img[i][j][2] / h))
                 counter[y][x][z] += int(1)
-                if not values[y][x][z]:
-                    values[y][x][z] = [0] * d
+                '''if not values[y][x][z]:
+                    values[y][x][z] = [0] * d'''
                 values[y][x][z][0] += prev_img[i][j][0]
                 values[y][x][z][1] += prev_img[i][j][1]
                 values[y][x][z][2] += prev_img[i][j][2]
@@ -46,6 +45,7 @@ def meanshiftpp(src, h):
             for j in range(cols):
                 count_sum = 0
                 val_sum = [0] * d
+                # calculate
                 blue_index = int(math.floor(prev_img[i][j][0] / h))
                 green_index = int(math.floor(prev_img[i][j][1] / h))
                 red_index = int(math.floor(prev_img[i][j][2] / h))
@@ -72,15 +72,14 @@ def meanshiftpp(src, h):
                     elif red_end_block + 1 > 256:
                         red_end_block -= 1
                     storage[blue_index][green_index][red_index] = [0] * d
-                    bgr_total = np.array(values[blue_start_block:blue_end_block+1, green_start_block:green_end_block+1, red_start_block:red_end_block+1])
+                    # SLICING RADIUS = 1
+                    # bgr_total = np.array(values[blue_start_block:blue_end_block+1, green_start_block:green_end_block+1, red_start_block:red_end_block+1])
+                    bgr_total = values[blue_start_block:blue_end_block+1, green_start_block:green_end_block+1, red_start_block:red_end_block+1]
                     count_sum = np.array(counter[blue_start_block:blue_end_block+1, green_start_block:green_end_block+1, red_start_block:red_end_block+1])
-                    bgr_totalCopy = [w for x in bgr_total for y in x for w in y if w is not None]
+                    bgr_totalCopy = [element for matrix in bgr_total for row in matrix for element in row]
+                    '''if element is not None'''
                     bgr_total = np.copy(bgr_totalCopy)
-                    # print(count_sumCopy)
                     val_sum = np.sum(bgr_total[:], axis=0)
-                    '''val_sum[0] = np.sum(bgr_total[:], axis=0)[0]
-                    val_sum[1] = np.sum(bgr_total[:], axis=0)[1]
-                    val_sum[2] = np.sum(bgr_total[:], axis=0)[2]'''
                     count_sum = np.sum(count_sum)
                     for k in range(d):
                         curr_img[i][j][k] = val_sum[k] / count_sum
