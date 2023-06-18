@@ -1,3 +1,2 @@
-resultnt immagini con tolerance < 1
-	record con entrambi i valori tolerance
-results immagini con tolerance < rows*cols
+A clustering algorithm for images applicable to data
+based on the MeanShift. With high speed improvement
